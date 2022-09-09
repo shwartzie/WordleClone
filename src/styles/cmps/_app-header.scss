@@ -1,0 +1,12 @@
+.app-header-container {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height: 65px;
+    border-bottom: 1px solid rgba(192, 180, 180, 0.477);
+    .title {
+        font-size: 36px;
+        font-weight: 700;
+        font-family: sans-serif;
+    }
+}
