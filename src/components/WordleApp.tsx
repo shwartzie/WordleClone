@@ -1,10 +1,8 @@
-import { WordleMat } from './Wordle/Board'
+import { Board } from './Wordle/Board';
 export const WordleApp = () => {
     return (
-        <>
-            <div >
-                <WordleMat />
-            </div>
-        </>
-    )
-}
+        <section>
+            <Board />
+        </section>
+    );
+};

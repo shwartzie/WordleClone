@@ -17,7 +17,9 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-
+.flex-1 {
+    flex: 1;
+}
 
 .main-app {
     min-height: 100vh;
