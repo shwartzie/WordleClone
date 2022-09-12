@@ -2,69 +2,70 @@ import { useCallback, useEffect, useState, useContext } from "react";
 import { AppContext } from "../../App";
 import { BoardService } from "../../services/WordleService/board.service";
 import { Key } from "./Key";
+import { getTypeOf } from "../../Types/Types";
+import { GameService } from "../../services/WordleService/game.service";
+import { BoardCmpTypes } from "../../Types/Types";
 
-export const Keyboard = () => {
+export const Keyboard = (p: BoardCmpTypes) => {
     const keys1: string[] = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"];
     const keys2: string[] = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
     const keys3: string[] = ["Z", "X", "C", "V", "B", "N", "M"];
 
-    const { currentAttempt, board, setBoard, setCurrentAttempt, correctWord }: any = useContext(AppContext);
-    const [copyOfBoard, setCopyOfBoard] = useState<string[][]>(BoardService.getBoardCopy(board));
+    const { setBoard, setCurrentAttempt, gameOver, setGameOver }: any = useContext(AppContext);
+
     const [keyButton, setKeyBtn] = useState<string>('');
 
-    useEffect(() => {
-        const b = BoardService.getBoardCopy(board);
-        setCopyOfBoard(b);
-    }, [board]);
-
     const handleKeyboard = useCallback((ev: any) => {
-        const currentAttempt = BoardService.getAttempt(null);
+        const currentAttempt = GameService.getAttempt(null);
         if (ev.key === 'Enter') {
-            onEnter(currentAttempt.letterPos, currentAttempt, copyOfBoard);
+            onEnter(currentAttempt.letterPos, currentAttempt, p.copyBoard);
         } else if (ev.key === 'Backspace') {
-            onDelete(currentAttempt.letterPos, copyOfBoard, currentAttempt);
+            onDelete(currentAttempt.letterPos, p.copyBoard, currentAttempt);
         } else {
-            onKey(currentAttempt, ev.key.toUpperCase(), copyOfBoard);
+            onKey(currentAttempt, ev.key.toUpperCase(), p.copyBoard);
         }
     }, []);
 
     useEffect(() => {
-        document.addEventListener('keydown', handleKeyboard);
+        if (gameOver.isGameOver) return;
+        if (p.copyBoard) {
+            document.addEventListener('keydown', handleKeyboard);
+        }
         return () => {
             document.removeEventListener('keydown', handleKeyboard);
         };
     }, [handleKeyboard]);
 
     const setLetterPos = (direction: string, currentAttempt: any): void => {
-        setCurrentAttempt(BoardService.setLetterPos(direction, currentAttempt));
+        setCurrentAttempt(GameService.setLetterPos(direction, currentAttempt));
     };
 
-    const selectLetter = (buttonType: string, keyBtn: string) => {
-
-        const { letterPos, attempt } = currentAttempt;
-        const newBoard = BoardService.getBoardCopy(board);
+    const selectLetter = async (buttonType: string, keyBtn: string) => {
+        if (gameOver.isGameOver) return;
+        const { letterPos, attempt } = p.currentAttempt;
+        const newBoard = await BoardService.getBoardCopy(p.board);
 
         setKeyBtn(keyBtn);
 
         if (buttonType === 'enter') {
-            onEnter(letterPos, currentAttempt, newBoard);
+            onEnter(letterPos, p.currentAttempt, newBoard);
 
         } else if (buttonType === 'delete') {
-            onDelete(letterPos, newBoard, currentAttempt);
+            onDelete(letterPos, newBoard, p.currentAttempt);
 
         } else {
-            onKey(currentAttempt, keyBtn, newBoard);
+            onKey(p.currentAttempt, keyBtn, newBoard);
         }
     };
 
-    const onEnter = (letterPos: number, attempt: any, board: string[][]) => {
-        if (letterPos !== 5) return;
+    const onEnter = (letterPos: number, attempt: any, board: getTypeOf['Board']) => {
+        if (gameOver.isGameOver || letterPos !== 5) return;
         checkWin(letterPos, attempt, board);
-        setCurrentAttempt(BoardService.onEnter(attempt));
+        setCurrentAttempt(GameService.onEnter(attempt));
     };
 
-    const onDelete = (letterPos: number, newBoard: string[][], currentAttempt: any) => {
-
+    const onDelete = (letterPos: number, newBoard: getTypeOf['Board'], currentAttempt: any) => {
+        if (gameOver.isGameOver) return;
         if (letterPos === -1) {
             setLetterPos('forward', currentAttempt);
             return;
@@ -76,8 +77,8 @@ export const Keyboard = () => {
         setLetterPos('backwards', currentAttempt);
     };
 
-    const onKey = (currentAttempt: any, keyBtn: string, newBoard: string[][]) => {
-
+    const onKey = (currentAttempt: any, keyBtn: string, newBoard: getTypeOf['Board']) => {
+        if (gameOver.isGameOver) return;
         if (currentAttempt.letterPos > 4) return;
 
         newBoard[currentAttempt.attempt][currentAttempt.letterPos] = keyBtn;
@@ -86,19 +87,19 @@ export const Keyboard = () => {
         setLetterPos('forward', currentAttempt);
     };
 
-    const checkWin = (letterPos: number, attempt: any, board: string[][]) => {
+    const checkWin = (letterPos: number, attempt: any, board: getTypeOf['Board']) => {
         let currentWord = '';
 
         for (let i = 0; i < 5; i++) {
             currentWord += board[attempt.attempt][i];
         }
-        if (!currentWord === correctWord.toUpperCase()) {
+
+        if (currentWord !== p.correctWord.toUpperCase()) {
             alert('Word not Found');
         } else {
-            alert('CORRECT YOU WON WORDELOS !')
+            setGameOver({ isGameOver: true, guessedWord: true });
+            alert('CORRECT YOU WON WORDELOS !');
         }
-
-        
     };
 
     return (

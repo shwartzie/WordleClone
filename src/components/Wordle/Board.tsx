@@ -1,29 +1,35 @@
 import { useEffect, useState } from "react";
-import { Letter } from "../Helpers/Letter";
+import { Letter } from "../GameFunctions/Letter";
 import { useContext } from "react";
 import { AppContext } from "../../App";
-import { Keyboard } from "../Helpers/Keyboard";
+import { Keyboard } from "../GameFunctions/Keyboard";
 import { BoardService } from '../../services/WordleService/board.service';
-export const Board = () => {
 
-    const context: any = useContext(AppContext);
+import { BoardCmpTypes } from "../../Types/Types";
 
-    //inorder to render a board with 6 rows and 5 columns
-    const copyBoard = BoardService.getBoardCopy(context.board);
-    copyBoard.pop();
-
+export const Board = (p: BoardCmpTypes) => {
+    console.log(p);
     return (
         <>
             <main className="game-container">
-                {context.board.map((_: any, i: number) => (
+                {p.board.map((_: any, i: number) => (
                     <section className="row-container" key={i}>
-                        {copyBoard.map((_: any, j: number) => (
-                            <Letter key={j} letterPos={j} attemptVal={i}></Letter>
+                        {p.copyBoard.map((_: any, j: number) => (
+                            <Letter
+                                key={j}
+                                letterPos={j} attemptVal={i}
+                                board={p.board} correctWord={p.correctWord}
+                                currentAttempt={p.currentAttempt}
+                            />
                         ))}
                     </section>
                 ))}
             </main>
-            <Keyboard />
+            <Keyboard
+                board={p.board} correctWord={p.correctWord}
+                currentAttempt={p.currentAttempt} copyBoard={p.copyBoard}
+            />
+
         </>
     );
 };
