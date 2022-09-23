@@ -43,7 +43,6 @@ function setLetterPos(dir: string, currentAttempt: any): getTypeOf['Attempt'] {
     const attempt = { ...currentAttempt, letterPos: currentAttempt.letterPos - 1 };
     storageService.store(ATTEMPT_STORAGE_KEY, attempt);
 
-    console.log(attempt);
     return attempt;
 }
 

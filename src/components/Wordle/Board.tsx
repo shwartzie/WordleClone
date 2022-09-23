@@ -8,13 +8,13 @@ import { BoardService } from '../../services/WordleService/board.service';
 import { BoardCmpTypes } from "../../Types/Types";
 
 export const Board = (p: BoardCmpTypes) => {
-    console.log(p);
+    console.log('p', p)
     return (
         <>
             <main className="game-container">
-                {p.board.map((_: any, i: number) => (
+                {p.board && p.board.map((_: any, i: number) => (
                     <section className="row-container" key={i}>
-                        {p.copyBoard.map((_: any, j: number) => (
+                        {p.copyBoard && p.copyBoard.map((_: any, j: number) => (
                             <Letter
                                 key={j}
                                 letterPos={j} attemptVal={i}

@@ -6,14 +6,15 @@ import { BoardService } from './services/WordleService/board.service';
 import React from 'react';
 import { GameService } from './services/WordleService/game.service';
 import { getTypeOf } from './Types/Types';
+
 interface AppContextInterface {
-  board: getTypeOf['Board'],
   setBoard: (board: getTypeOf['Board']) => void,
   currentAttempt: getTypeOf['Attempt'],
   setCurrentAttempt: (attempt: getTypeOf['Attempt']) => void,
   correctWord: string,
   gameOver: getTypeOf['GameOver'],
-  setGameOver: (gameOver: getTypeOf['GameOver']) => void;
+  setGameOver: (gameOver: getTypeOf['GameOver']) => void,
+  currentBoard: getTypeOf['Board'],
 }
 
 export const AppContext = createContext<AppContextInterface | null>(null);
@@ -23,7 +24,7 @@ function App() {
   const [currentAttempt, setCurrentAttempt] = useState<getTypeOf['Attempt']>();
   const [correctWord, setCorrectWord] = useState<string>('');
   const [gameOver, setGameOver] = useState<getTypeOf['GameOver']>({ isGameOver: false, isGuessedWord: false });
-
+  const [currentBoard, setCurrentBoard] = useState<getTypeOf['Board']>();
   //init
   useEffect(() => {
     const createdBoard: any = async () => await BoardService.getBoard();
@@ -36,18 +37,20 @@ function App() {
     setGameOver(gameOver);
   }, []);
 
-
-
+  useEffect(() => {
+    const curr: any = async () => await BoardService.getBoard();
+    setCurrentBoard(curr);
+  }, [board]);
 
   return (
-    <div>
+    <>
       <AppHeader />
-      {board && currentAttempt && <AppContext.Provider value={
-        { board, currentAttempt, setBoard, setCurrentAttempt, correctWord, gameOver, setGameOver }
+      {currentBoard && currentAttempt && <AppContext.Provider value={
+        { currentBoard, currentAttempt, setBoard, setCurrentAttempt, correctWord, gameOver, setGameOver }
       }>
-        {board && currentAttempt && <WordleApp board={board} currentAttempt={currentAttempt} correctWord={correctWord} />}
+        {currentBoard && currentAttempt && <WordleApp board={currentBoard} currentAttempt={currentAttempt} correctWord={correctWord} />}
       </AppContext.Provider>}
-    </div >
+    </ >
   );
 }
 

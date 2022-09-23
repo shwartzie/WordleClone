@@ -7,48 +7,44 @@
     flex-direction: column;
 }
 .game-container {
-    width: 300px;
-    height: 375px;
-    border: 1px solid black;
+    width: 350px;
+    height: 420px;
     display: flex;
     flex-direction: column;
     margin: 0 auto;
-    margin-top: 30px;
+    margin-top: 100px;
     section:last-of-type {
         padding-bottom: 10px;
     }
     .row-container {
-        flex: 33%;
         display: flex;
-        flex-direction: row;
-        margin: 5px;
+        justify-content: space-between;
     }
     .square {
-        height: 32px;
-        width: 32px;
+        height: 62px;
+        width: 62px;
         border: 2px solid #d3d6da;
     }
     .letter {
-        flex: 33%;
         height: 100%;
-        border: 1px solid grey;
-        margin: 5px;
         display: grid;
         place-items: center;
         font-size: 30px;
         font-weight: bolder;
-        color: #000000;
-        font-family: Arial, Helvetica, sans-serif;
+        color: #ffffff;
+        font-family: ClearSans, Helvetica, sans-serif;
+        width: 62px;
+        height: 62px;
     }
     .correct {
-        background-color: #528d4e;
+        background-color: #6aaa64;
     }
 
     .almost {
-        background-color: #b49f39;
+        background-color: #c9b458;
     }
 
     .error {
-        background-color: #3a393c3f;
+        background-color: #787c7e;
     }
 }

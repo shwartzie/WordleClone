@@ -14,9 +14,10 @@ export const WordleApp = (p: { board: getTypeOf['Board'], currentAttempt: getTyp
         const currAttempt = await p.currentAttempt;
         const correct = await p.correctWord;
         //inorder to render a board with 6 rows and 5 columns
-        const copyBoard: getTypeOf['Board'] = await BoardService.getBoardCopy(currBoard);
-        copyBoard.pop();
-
+        const copyBoard: getTypeOf['Board'] = BoardService.getBoardCopy(currBoard);
+        if (copyBoard.length > 5) {
+            copyBoard.pop();
+        }
         //setters
         setBoard(currBoard);
         setCopy(copyBoard);
@@ -24,9 +25,11 @@ export const WordleApp = (p: { board: getTypeOf['Board'], currentAttempt: getTyp
         setCorrectWord(correct);
     };
 
+
     useEffect(() => {
         handlePromises();
-    }, []);
+        console.log('stateBoard', stateBoard);
+    }, [p.board]);
 
     return (
         <section>

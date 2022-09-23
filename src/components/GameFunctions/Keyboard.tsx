@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useContext } from "react";
+import { useCallback, useEffect, useContext } from "react";
 import { AppContext } from "../../App";
 import { BoardService } from "../../services/WordleService/board.service";
 import { Key } from "./Key";
@@ -12,8 +12,6 @@ export const Keyboard = (p: BoardCmpTypes) => {
     const keys3: string[] = ["Z", "X", "C", "V", "B", "N", "M"];
 
     const { setBoard, setCurrentAttempt, gameOver, setGameOver }: any = useContext(AppContext);
-
-    const [keyButton, setKeyBtn] = useState<string>('');
 
     const handleKeyboard = useCallback((ev: any) => {
         const currentAttempt = GameService.getAttempt(null);
@@ -45,7 +43,6 @@ export const Keyboard = (p: BoardCmpTypes) => {
         const { letterPos, attempt } = p.currentAttempt;
         const newBoard = await BoardService.getBoardCopy(p.board);
 
-        setKeyBtn(keyBtn);
 
         if (buttonType === 'enter') {
             onEnter(letterPos, p.currentAttempt, newBoard);
@@ -73,17 +70,17 @@ export const Keyboard = (p: BoardCmpTypes) => {
 
         newBoard[currentAttempt.attempt][currentAttempt.letterPos] = '';
         const board = BoardService.saveBoard(newBoard);
-        setBoard(board);
+        setBoard(Promise.resolve(board));
         setLetterPos('backwards', currentAttempt);
     };
 
-    const onKey = (currentAttempt: any, keyBtn: string, newBoard: getTypeOf['Board']) => {
+    const onKey = async (currentAttempt: any, keyBtn: string, newBoard: getTypeOf['Board']) => {
         if (gameOver.isGameOver) return;
         if (currentAttempt.letterPos > 4) return;
-
         newBoard[currentAttempt.attempt][currentAttempt.letterPos] = keyBtn;
-        const board = BoardService.saveBoard(newBoard);
-        setBoard(newBoard);
+        const board = await BoardService.saveBoard(newBoard);
+
+        setBoard(Promise.resolve(board));
         setLetterPos('forward', currentAttempt);
     };
 

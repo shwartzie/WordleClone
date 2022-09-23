@@ -11,7 +11,7 @@ const BOARD_STORAGE_KEY: string = 'boardDB';
 
 function getBoardCopy(board: getTypeOf['Board']) {
     const copy = JSON.parse(JSON.stringify(board));
-    return Promise.resolve(copy);
+    return copy;
 }
 
 function getBoard() {
@@ -37,7 +37,7 @@ function createBoard() {
 
 function saveBoard(board: getTypeOf['Board']) {
     storageService.store(BOARD_STORAGE_KEY, board);
-    return board;
+    return Promise.resolve({...board});
 }
 
 
